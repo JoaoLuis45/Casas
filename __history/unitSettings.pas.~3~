@@ -1,0 +1,96 @@
+unit unitSettings;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Buttons, Vcl.Themes, Vcl.Styles;
+
+type
+  TformSettings = class(TForm)
+    panelMenu: TPanel;
+    btnInformation: TSpeedButton;
+    panelSettings: TPanel;
+    Label1: TLabel;
+    RadioGroup1: TRadioGroup;
+    btnSettings: TSpeedButton;
+    panelInformation: TPanel;
+    Label2: TLabel;
+    Label3: TLabel;
+    procedure FormCreate(Sender: TObject);
+    procedure RadioGroup1Click(Sender: TObject);
+//    procedure btnSettingsMouseEnter(Sender: TObject);
+//    procedure btnSettingsMouseLeave(Sender: TObject);
+//    procedure btnInformationMouseEnter(Sender: TObject);
+//    procedure btnInformationMouseLeave(Sender: TObject);
+    procedure btnSettingsClick(Sender: TObject);
+    procedure btnInformationClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  formSettings: TformSettings;
+
+implementation
+
+{$R *.dfm}
+
+
+
+procedure TformSettings.btnInformationClick(Sender: TObject);
+begin
+  panelInformation.Align := alClient;
+  panelInformation.Visible := True;
+  panelSettings.Visible := False;
+end;
+
+procedure TformSettings.btnSettingsClick(Sender: TObject);
+begin
+  panelSettings.Align := alClient;
+  panelInformation.Visible := False;
+  panelSettings.Visible := True;
+end;
+
+
+
+procedure TformSettings.FormCreate(Sender: TObject);
+begin
+  TStyleManager.TrySetStyle('Glossy');
+end;
+
+procedure TformSettings.RadioGroup1Click(Sender: TObject);
+begin
+  case RadioGroup1.ItemIndex of
+    0: TStyleManager.TrySetStyle('Glossy');
+    1: TStyleManager.TrySetStyle('Sapphire Kamri');
+    2: TStyleManager.TrySetStyle('Onyx Blue');
+  end;
+end;
+
+//procedure TformSettings.btnSettingsMouseEnter(Sender: TObject);
+//begin
+//  panelSettings.Align := alClient;
+//  panelSettings.Visible := True;
+//end;
+
+//procedure TformSettings.btnSettingsMouseLeave(Sender: TObject);
+//begin
+//  panelSettings.Visible := False;
+//  panelSettings.Align := alNone;
+//end;
+
+//procedure TformSettings.btnInformationMouseEnter(Sender: TObject);
+//begin
+//  panelInformation.Align := alClient;
+//  panelInformation.Visible := True;
+//end;
+
+//procedure TformSettings.btnInformationMouseLeave(Sender: TObject);
+//begin
+//  panelInformation.Visible := False;
+//  panelInformation.Align := alNone;
+//end;
+end.

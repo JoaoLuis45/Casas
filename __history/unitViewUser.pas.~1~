@@ -1,0 +1,42 @@
+unit unitViewUser;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask,
+  Vcl.ExtCtrls, Vcl.Buttons;
+
+type
+  TformViewUser = class(TForm)
+    Label1: TLabel;
+    Label2: TLabel;
+    txtCPF: TDBEdit;
+    Label3: TLabel;
+    txtName: TDBEdit;
+    Label4: TLabel;
+    txtCel: TDBEdit;
+    Label5: TLabel;
+    txtNumHouse: TDBEdit;
+    Label6: TLabel;
+    txtIndication: TDBEdit;
+    Label7: TLabel;
+    txtObs: TDBMemo;
+    btnCancel: TSpeedButton;
+    SpeedButton1: TSpeedButton;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  formViewUser: TformViewUser;
+
+implementation
+
+{$R *.dfm}
+
+uses unitDM;
+
+end.

@@ -1,0 +1,210 @@
+unit unitHireHouse;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Data.DB,
+  Vcl.Grids, Vcl.DBGrids, Vcl.Mask, Vcl.DBCtrls, Vcl.Buttons;
+
+type
+  TformHireHouse = class(TForm)
+    Panel1: TPanel;
+    Label1: TLabel;
+    Image1: TImage;
+    rgType: TRadioGroup;
+    lblType: TLabel;
+    txtFindHouse: TEdit;
+    gridFindHouse: TDBGrid;
+    GroupBox1: TGroupBox;
+    Label8: TLabel;
+    txtBeginDate: TDBEdit;
+    Label9: TLabel;
+    txtEndDate: TDBEdit;
+    btnConfirm: TBitBtn;
+    btnCancel: TBitBtn;
+    Label6: TLabel;
+    GroupBox2: TGroupBox;
+    Label7: TLabel;
+    txtPayday: TDBEdit;
+    txtIndication: TDBEdit;
+    txtCel: TDBEdit;
+    txtCPF: TDBEdit;
+    txtName: TDBEdit;
+    Label5: TLabel;
+    Label4: TLabel;
+    Label3: TLabel;
+    Label2: TLabel;
+    txtNumCasa: TDBEdit;
+    procedure txtFindHouseChange(Sender: TObject);
+    procedure rgTypeClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormShow(Sender: TObject);
+    procedure btnConfirmClick(Sender: TObject);
+    procedure btnCancelClick(Sender: TObject);
+    procedure BitBtn1Click(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  formHireHouse: TformHireHouse;
+
+implementation
+
+{$R *.dfm}
+
+uses unitCasas, unitDM, unitFindHouse, unitInquilinos, unitPrincipal,
+  unitRegisterHouse, unitDesapropiateHouse, unitFindUser;
+
+procedure TformHireHouse.BitBtn1Click(Sender: TObject);
+begin
+    dm.sqlFindHouse.Edit;
+end;
+
+procedure TformHireHouse.btnCancelClick(Sender: TObject);
+begin
+  DM.sqlFindHouse.Close;
+  DM.sqlFindUser.Close;
+  formHireHouse.Close;
+  txtFindHouse.Text := '';
+  txtCPF.Text := '';
+  txtName.Text := '';
+  txtCel.Text := '';
+  txtIndication.Text := '';
+  txtPayday.Text := '';
+  txtBeginDate.Text := '';
+  txtEndDate.Text := '';
+  txtNumCasa.Text := '';
+end;
+
+procedure TformHireHouse.btnConfirmClick(Sender: TObject);
+var
+  numcasa: String;
+  nomeinquilino : String;
+  mes : String;
+  cpf : String;
+
+begin
+try
+  if (StrToInt(txtPayday.Text) > 30) or (StrToInt(txtPayday.Text) < 1) then begin
+        ShowMessage('O dia de pagamento deve ser maior ou igual a 1 e menor ou igual a 30');
+  end
+  else if (txtNumCasa.Text = '') or (txtCPF.Text = '') or (txtName.Text = '') or (txtCel.Text = '') or (txtIndication.Text = '') or (txtPayday.Text = '') or (txtBeginDate.Text = '') or (txtEndDate.Text = '') then begin
+       ShowMessage('Preencha todos os campos corretamente!');
+  end
+  else begin
+        numcasa := txtNumCasa.Text;
+        nomeinquilino := txtName.Text;
+        mes := 'Casa '+numcasa+' alugada ao inquilino '+nomeinquilino+'!';
+        if Application.MessageBox('Deseja alugar esta casa?','Atenção',MB_ICONWARNING+MB_OKCANCEL) = mrOk then
+          begin
+            DM.sqlInsertUsers.ParamByName('pCpf').Value := txtCPF.Text;
+            DM.sqlInsertUsers.ParamByName('pName').Value := txtName.Text;
+            DM.sqlInsertUsers.ParamByName('pCelular').Value := txtCel.Text;
+            DM.sqlInsertUsers.ParamByName('pIndicacao').Value := txtIndication.Text;
+            DM.sqlInsertUsers.ParamByName('pNumCasa').Value := StrToInt(txtNumCasa.Text);
+            DM.sqlEditHouse.ParamByName('pPayDay').Value := txtPayday.Text;
+            DM.sqlEditHouse.ParamByName('pBeginDate').Value := FormatDateTime('yyyy-mm-dd',StrToDate(txtBeginDate.Text));
+            DM.sqlEditHouse.ParamByName('pEndDate').Value := FormatDateTime('yyyy-mm-dd',StrToDate(txtEndDate.Text));
+            DM.sqlEditHouse.ParamByName('pNumHouse').Value := StrToInt(txtNumCasa.Text);
+            DM.sqlInsertUsers.Execute();
+            DM.sqlEditHouse.Execute();
+            ShowMessage(mes);
+            txtFindHouse.Text := '';
+            txtCPF.Text := '';
+            txtName.Text := '';
+            txtCel.Text := '';
+            txtIndication.Text := '';
+            txtPayday.Text := '';
+            txtBeginDate.Text := '';
+            txtEndDate.Text := '';
+            txtNumCasa.Text := '';
+            formHireHouse.Close;
+          end;
+   end;
+Except
+on E:Exception do
+  ShowMessage('erro foi:'+E.Message);
+end;
+end;
+
+procedure TformHireHouse.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  DM.sqlFindUser.Close;
+  txtFindHouse.Text := '';
+  txtCPF.Text := '';
+  txtName.Text := '';
+  txtCel.Text := '';
+  txtIndication.Text := '';
+  txtPayday.Text := '';
+  txtBeginDate.Text := '';
+  txtEndDate.Text := '';
+  txtNumCasa.Text := '';
+
+
+
+end;
+
+procedure TformHireHouse.FormShow(Sender: TObject);
+begin
+    DM.sqlFindUser.Open();
+    lblType.Caption := 'Selecione pelo Número da casa:';
+    DM.sqlFindHouse.Close;
+    DM.sqlFindHouse.SQL.Clear;
+    DM.sqlFindHouse.SQL.Add('SELECT * FROM casas WHERE dia_pag IS NULL');
+    DM.sqlFindHouse.Open();
+    if DM.sqlFindHouse.FieldByName('num').Value <> NULL then
+
+end;
+
+procedure TformHireHouse.rgTypeClick(Sender: TObject);
+begin
+  case rgType.ItemIndex of
+    0: lblType.Caption := 'Selecione pelo Número da casa:';
+    1: lblType.Caption := 'Selecione pela Rua da casa:';
+    2: lblType.Caption := 'Selecione pelo Bairro da casa:';
+    3: lblType.Caption := 'Selecione pelo Valor da casa:';
+  end;
+end;
+
+procedure TformHireHouse.txtFindHouseChange(Sender: TObject);
+begin
+  DM.sqlFindHouse.Close;
+  DM.sqlFindHouse.SQL.Clear;
+  if txtFindHouse.Text = '' then
+    begin
+    DM.sqlFindHouse.SQL.Add('SELECT * FROM casas WHERE dia_pag IS NULL');
+    end
+  else
+    begin
+      case rgType.ItemIndex of
+    0:
+      begin
+          DM.sqlFindHouse.SQL.Add('SELECT * FROM casas WHERE num LIKE :pConsulta AND dia_pag IS NULL');
+          DM.sqlFindHouse.ParamByName('pConsulta').Value := '%'+txtFindHouse.Text+'%';
+      end;
+    1:
+       begin
+          DM.sqlFindHouse.SQL.Add('SELECT * FROM casas WHERE rua LIKE :pConsulta AND dia_pag IS NULL');
+          DM.sqlFindHouse.ParamByName('pConsulta').Value := '%'+txtFindHouse.Text+'%';
+      end;
+    2:
+       begin
+          DM.sqlFindHouse.SQL.Add('SELECT * FROM casas WHERE bairro LIKE :pConsulta AND dia_pag IS NULL');
+          DM.sqlFindHouse.ParamByName('pConsulta').Value := '%'+txtFindHouse.Text+'%';
+      end;
+    3:
+       begin
+          DM.sqlFindHouse.SQL.Add('SELECT * FROM casas WHERE valor LIKE :pConsulta AND dia_pag IS NULL');
+          DM.sqlFindHouse.ParamByName('pConsulta').Value := '%'+txtFindHouse.Text+'%';
+      end;
+  end;
+    end;
+
+  DM.sqlFindHouse.Open();
+end;
+
+end.

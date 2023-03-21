@@ -1,0 +1,86 @@
+unit unitSettings;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Buttons, Vcl.Themes, Vcl.Styles;
+
+type
+  TformSettings = class(TForm)
+    panelMenu: TPanel;
+    btnInformation: TSpeedButton;
+    panelSettings: TPanel;
+    Label1: TLabel;
+    RadioGroup1: TRadioGroup;
+    btnSettings: TSpeedButton;
+    panelInformation: TPanel;
+    Label2: TLabel;
+    Label3: TLabel;
+    procedure FormCreate(Sender: TObject);
+    procedure RadioGroup1Click(Sender: TObject);
+    procedure btnSettingsMouseEnter(Sender: TObject);
+    procedure btnInformationMouseEnter(Sender: TObject);
+
+    procedure EscondeMenus;
+    procedure FormMouseEnter(Sender: TObject);
+    procedure panelMenuMouseEnter(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  formSettings: TformSettings;
+
+implementation
+
+{$R *.dfm}
+
+procedure TformSettings.FormCreate(Sender: TObject);
+begin
+  TStyleManager.TrySetStyle('Glossy');
+end;
+
+procedure TformSettings.FormMouseEnter(Sender: TObject);
+begin
+  EscondeMenus();
+end;
+
+procedure TformSettings.panelMenuMouseEnter(Sender: TObject);
+begin
+  EscondeMenus();
+end;
+
+procedure TformSettings.RadioGroup1Click(Sender: TObject);
+begin
+  case RadioGroup1.ItemIndex of
+    0: TStyleManager.TrySetStyle('Glossy');
+    1: TStyleManager.TrySetStyle('Sapphire Kamri');
+    2: TStyleManager.TrySetStyle('Onyx Blue');
+  end;
+end;
+
+procedure TformSettings.btnSettingsMouseEnter(Sender: TObject);
+begin
+  EscondeMenus();
+  panelSettings.Visible := True;
+
+end;
+
+
+procedure TformSettings.EscondeMenus;
+begin
+  panelSettings.Visible := False;
+  panelInformation.Visible := False;
+end;
+
+procedure TformSettings.btnInformationMouseEnter(Sender: TObject);
+begin
+  EscondeMenus();
+  panelInformation.Visible := True;
+end;
+
+
+end.

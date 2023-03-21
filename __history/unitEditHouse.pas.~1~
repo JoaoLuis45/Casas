@@ -1,0 +1,57 @@
+unit unitEditHouse;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.StdCtrls, Vcl.Buttons,
+  Vcl.Grids, Vcl.DBGrids, Vcl.ExtCtrls;
+
+type
+  TformEditHouse = class(TForm)
+    Panel1: TPanel;
+    Label1: TLabel;
+    Image1: TImage;
+    Label2: TLabel;
+    txtEditHouse: TEdit;
+    DBGrid1: TDBGrid;
+    btnEditHouse: TBitBtn;
+    btnCancel: TBitBtn;
+    lblRegisterHouse: TLabel;
+    procedure txtEditHouseChange(Sender: TObject);
+    procedure btnCancelClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  formEditHouse: TformEditHouse;
+
+implementation
+
+{$R *.dfm}
+
+uses unitCasas, unitDM, unitFindHouse, unitInquilinos, unitPrincipal,
+  unitRegisterHouse;
+
+procedure TformEditHouse.btnCancelClick(Sender: TObject);
+begin
+  DM.tbCasas.Cancel;
+  DM.tbCasas.Close;
+end;
+
+procedure TformEditHouse.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  DM.tbCasas.Cancel;
+  DM.tbCasas.Close;
+end;
+
+procedure TformEditHouse.txtEditHouseChange(Sender: TObject);
+begin
+  DM.tbCasas.Locate('num',txtEditHouse.Text,[loPartialKey]);
+end;
+
+end.

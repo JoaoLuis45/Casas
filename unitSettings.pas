@@ -1,0 +1,125 @@
+unit unitSettings;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Buttons, Vcl.Themes, Vcl.Styles;
+
+type
+  TformSettings = class(TForm)
+    panelMenu: TPanel;
+    btnInformation: TSpeedButton;
+    panelSettings: TPanel;
+    Label1: TLabel;
+    RadioGroup1: TRadioGroup;
+    btnSettings: TSpeedButton;
+    panelInformation: TPanel;
+    Label2: TLabel;
+    Label3: TLabel;
+    procedure FormCreate(Sender: TObject);
+    procedure RadioGroup1Click(Sender: TObject);
+    procedure btnSettingsMouseEnter(Sender: TObject);
+    procedure btnInformationMouseEnter(Sender: TObject);
+    procedure PintaMenus(obj: TPanel);
+    procedure EscondeMenus;
+    procedure FormMouseEnter(Sender: TObject);
+    procedure panelMenuMouseEnter(Sender: TObject);
+    procedure panelSettingsMouseEnter(Sender: TObject);
+    procedure panelInformationMouseEnter(Sender: TObject);
+  private
+
+   protected
+       property ObjectMenuItem;
+          { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  formSettings: TformSettings;
+
+implementation
+
+{$R *.dfm}
+
+uses unitDM;
+
+procedure TformSettings.FormCreate(Sender: TObject);
+begin
+  TStyleManager.TrySetStyle('Glossy');
+end;
+
+procedure TformSettings.FormMouseEnter(Sender: TObject);
+begin
+  EscondeMenus();
+end;
+
+procedure TformSettings.panelInformationMouseEnter(Sender: TObject);
+begin
+  PintaMenus(panelInformation);
+end;
+
+procedure TformSettings.panelMenuMouseEnter(Sender: TObject);
+begin
+  EscondeMenus();
+end;
+
+procedure TformSettings.panelSettingsMouseEnter(Sender: TObject);
+begin
+  PintaMenus(panelSettings);
+end;
+
+
+procedure TformSettings.PintaMenus(obj: TPanel);
+begin
+  obj.Color := cl3DDkShadow;
+end;
+
+procedure TformSettings.RadioGroup1Click(Sender: TObject);
+begin
+  case RadioGroup1.ItemIndex of
+    0:
+      begin
+        TStyleManager.TrySetStyle('Glossy');
+        DM.sqlUpdateTheme.ParamByName('pTheme').Value := RadioGroup1.ItemIndex;
+        DM.sqlUpdateTheme.Execute();
+        end;
+    1:
+      begin
+        TStyleManager.TrySetStyle('Sapphire Kamri');
+        DM.sqlUpdateTheme.ParamByName('pTheme').Value := RadioGroup1.ItemIndex;
+        DM.sqlUpdateTheme.Execute();
+
+      end;
+    2:
+      begin
+        TStyleManager.TrySetStyle('Onyx Blue');
+        DM.sqlUpdateTheme.ParamByName('pTheme').Value := RadioGroup1.ItemIndex;
+        DM.sqlUpdateTheme.Execute();
+      end;
+  end;
+end;
+
+procedure TformSettings.btnSettingsMouseEnter(Sender: TObject);
+begin
+  EscondeMenus();
+  panelSettings.Visible := True;
+
+end;
+
+
+procedure TformSettings.EscondeMenus;
+begin
+  panelSettings.Visible := False;
+  panelInformation.Visible := False;
+end;
+
+procedure TformSettings.btnInformationMouseEnter(Sender: TObject);
+begin
+  EscondeMenus();
+  panelInformation.Visible := True;
+end;
+
+
+end.

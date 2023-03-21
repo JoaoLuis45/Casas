@@ -1,0 +1,142 @@
+unit unitDesapropiateHouse;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Data.DB,
+  Vcl.Grids, Vcl.DBGrids, Vcl.Buttons, Vcl.DBCtrls;
+
+type
+  TformDesapropiateHouse = class(TForm)
+    Panel1: TPanel;
+    Label1: TLabel;
+    Image1: TImage;
+    lblTypeUser: TLabel;
+    rgType: TRadioGroup;
+    txtFindUser: TEdit;
+    gridFindHouse: TDBGrid;
+    Label2: TLabel;
+    Label3: TLabel;
+    txtNumCasa: TDBComboBox;
+    btnDesapropiateHouse: TBitBtn;
+    btnCancel: TBitBtn;
+    DBLookupComboBox1: TDBLookupComboBox;
+    procedure rgTypeClick(Sender: TObject);
+    procedure txtFindUserChange(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure btnCancelClick(Sender: TObject);
+    procedure btnDesapropiateHouseClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  formDesapropiateHouse: TformDesapropiateHouse;
+
+implementation
+
+{$R *.dfm}
+
+uses unitCasas, unitDM, unitFindHouse, unitFindUser, unitHireHouse,
+  unitInquilinos, unitPrincipal, unitRegisterHouse;
+
+procedure TformDesapropiateHouse.btnCancelClick(Sender: TObject);
+begin
+  formDesapropiateHouse.Close;
+  txtFindUser.Text := ''
+end;
+
+procedure TformDesapropiateHouse.btnDesapropiateHouseClick(Sender: TObject);
+var
+  numc: String;
+  nomeinq: String;
+  mes: String;
+begin
+  numc := txtNumCasa.Text;
+  nomeinq := txtNameInq.Text;
+  mes := 'A casa de número '+numc+' foi desapropiada do inquilino '+nomeinq+' !';
+  if Application.MessageBox('Deseja realmente desapropiar essa casa deste inquilino?','Atenção!',MB_ICONEXCLAMATION+MB_OKCANCEL) = mrOk then
+    begin
+      DM.sqlDesapropiateHouseDeleteUser.ParamByName('pNum').Value := StrToInt(txtNumCasa.Text);
+      DM.sqlDesapropiateHouseUpdatePayDay.ParamByName('pNum').Value := StrToInt(txtNumCasa.Text);
+      DM.sqlDesapropiateHouseUpdateBeginDate.ParamByName('pNum').Value := StrToInt(txtNumCasa.Text);
+      DM.sqlDesapropiateHouseUpdateEndDate.ParamByName('pNum').Value := StrToInt(txtNumCasa.Text);
+      DM.sqlDesapropiateHouseDeleteUser.Execute();
+      DM.sqlDesapropiateHouseUpdatePayDay.Execute();
+      DM.sqlDesapropiateHouseUpdateBeginDate.Execute();
+      DM.sqlDesapropiateHouseUpdateEndDate.Execute();
+      ShowMessage(mes);
+      DM.sqlFindHouse.Refresh;
+      DM.sqlFindUser.Refresh;
+    end;
+end;
+
+procedure TformDesapropiateHouse.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  DM.sqlFindUser.Close;
+  DM.sqlFindHouse.Close;
+end;
+
+procedure TformDesapropiateHouse.FormShow(Sender: TObject);
+begin
+  DM.sqlFindHouse.Close;
+  DM.sqlFindHouse.SQL.Clear;
+  DM.sqlFindHouse.SQL.Text := 'SELECT * FROM casas AS C INNER JOIN inquilinos AS B ON C.num = B.num_casa';
+  DM.sqlFindHouse.Open();
+  lblTypeUser.Caption := 'Selecione pelo Nome do Inquilino:';
+  //formCasas.Hide;
+end;
+
+procedure TformDesapropiateHouse.rgTypeClick(Sender: TObject);
+begin
+    case rgType.ItemIndex of
+    0: lblTypeUser.Caption := 'Selecione pelo Nome do Inquilino:';
+    1: lblTypeUser.Caption := 'Selecione pelo Celular do Inquilino:';
+    2: lblTypeUser.Caption := 'Selecione pelo Número da casa:';
+    3: lblTypeUser.Caption := 'Selecione pelo CPF do Inquilino:';
+  end;
+end;
+
+procedure TformDesapropiateHouse.txtFindUserChange(Sender: TObject);
+begin
+  DM.sqlFindUser.Close;
+  DM.sqlFindUser.SQL.Clear;
+  if txtFindUser.Text = '' then
+    begin
+    DM.sqlFindUser.SQL.Text := 'SELECT * FROM casas AS C INNER JOIN inquilinos AS B ON C.num = B.num_casa';
+    end
+  else
+    begin
+      case rgType.ItemIndex of
+    0:
+      begin
+          DM.sqlFindUser.SQL.Add('SELECT * FROM casas AS C INNER JOIN inquilinos AS B ON C.num = B.num_casa WHERE B.nome LIKE :pUser');
+          DM.sqlFindUser.ParamByName('pUser').Value := '%'+txtFindUser.Text+'%';
+      end;
+    1:
+       begin
+          DM.sqlFindUser.SQL.Add('SELECT * FROM casas AS C INNER JOIN inquilinos AS B ON C.num = B.num_casa WHERE B.celular LIKE :pUser');
+          DM.sqlFindUser.ParamByName('pUser').Value := '%'+txtFindUser.Text+'%';
+      end;
+    2:
+       begin
+          DM.sqlFindUser.SQL.Add('SELECT * FROM casas AS C INNER JOIN inquilinos AS B ON C.num = B.num_casa WHERE B.num_casa LIKE :pUser');
+          DM.sqlFindUser.ParamByName('pUser').Value := '%'+txtFindUser.Text+'%';
+      end;
+    3:
+       begin
+          DM.sqlFindUser.SQL.Add('SELECT * FROM casas AS C INNER JOIN inquilinos AS B ON C.num = B.num_casa WHERE B.cpf LIKE :pUser');
+          DM.sqlFindUser.ParamByName('pUser').Value := '%'+txtFindUser.Text+'%';
+      end;
+  end;
+    end;
+
+  DM.sqlFindUser.Open();
+end;
+
+end.

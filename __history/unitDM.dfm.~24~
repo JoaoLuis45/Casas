@@ -1,0 +1,343 @@
+object DM: TDM
+  Height = 513
+  Width = 776
+  object connection: TFDConnection
+    Params.Strings = (
+      'Database=casas'
+      'User_Name=admin'
+      'Password=joaobr12'
+      'Server=casas.cfydoor5czhr.us-east-1.rds.amazonaws.com'
+      'DriverID=MySQL')
+    Connected = True
+    LoginPrompt = False
+    Left = 56
+    Top = 56
+  end
+  object sqlFindHouse: TFDQuery
+    Active = True
+    MasterSource = dsInquilinos
+    Connection = connection
+    SQL.Strings = (
+      'SELECT * FROM casas')
+    Left = 544
+    Top = 272
+    ParamData = <
+      item
+        Name = 'pConsulta'
+        ParamType = ptInput
+      end
+      item
+        Name = 'pNum'
+        ParamType = ptInput
+      end>
+    object sqlFindHousenum: TFDAutoIncField
+      FieldName = 'num'
+      Origin = 'num'
+      ProviderFlags = [pfInWhere, pfInKey]
+      ReadOnly = True
+    end
+    object sqlFindHouserua: TStringField
+      FieldName = 'rua'
+      Origin = 'rua'
+      Required = True
+      Size = 80
+    end
+    object sqlFindHousebairro: TStringField
+      FieldName = 'bairro'
+      Origin = 'bairro'
+      Required = True
+      Size = 50
+    end
+    object sqlFindHousevalor: TBCDField
+      FieldName = 'valor'
+      Origin = 'valor'
+      Required = True
+      Precision = 10
+      Size = 2
+    end
+    object sqlFindHousedia_pag: TIntegerField
+      FieldName = 'dia_pag'
+      Origin = 'dia_pag'
+    end
+    object sqlFindHousedata_inicial: TDateField
+      FieldName = 'data_inicial'
+      Origin = 'data_inicial'
+      EditMask = '##/##/####;1;_'
+    end
+    object sqlFindHousedata_final: TDateField
+      FieldName = 'data_final'
+      Origin = 'data_final'
+      EditMask = '##/##/####;1;_'
+    end
+    object sqlFindHouseNomeInquilino: TStringField
+      FieldKind = fkLookup
+      FieldName = 'NomeInquilino'
+      LookupDataSet = sqlFindUser
+      LookupKeyFields = 'num_casa'
+      LookupResultField = 'nome'
+      KeyFields = 'num'
+      Size = 50
+      Lookup = True
+    end
+  end
+  object dsFindHouse: TDataSource
+    DataSet = sqlFindHouse
+    Left = 616
+    Top = 272
+  end
+  object sqlFindUser: TFDQuery
+    Active = True
+    Connection = connection
+    SQL.Strings = (
+      'SELECT * FROM inquilinos'
+      '')
+    Left = 544
+    Top = 336
+    object sqlFindUsercpf: TStringField
+      FieldName = 'cpf'
+      Required = True
+      Size = 14
+    end
+    object sqlFindUsernome: TStringField
+      FieldName = 'nome'
+      Required = True
+      Size = 50
+    end
+    object sqlFindUsercelular: TStringField
+      FieldName = 'celular'
+      Required = True
+      Size = 16
+    end
+    object sqlFindUserindicacao: TStringField
+      FieldName = 'indicacao'
+      Required = True
+      Size = 50
+    end
+    object sqlFindUsernum_casa: TIntegerField
+      FieldName = 'num_casa'
+      Required = True
+    end
+    object sqlFindUserobs: TMemoField
+      AutoGenerateValue = arDefault
+      FieldName = 'obs'
+      Origin = 'obs'
+      BlobType = ftMemo
+    end
+  end
+  object dsFindUser: TDataSource
+    DataSet = sqlFindUser
+    Left = 624
+    Top = 344
+  end
+  object tbCasas: TFDTable
+    Active = True
+    IndexFieldNames = 'num'
+    Connection = connection
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
+    TableName = 'casas.casas'
+    Left = 176
+    Top = 64
+    object tbCasasnum: TIntegerField
+      DisplayWidth = 10
+      FieldName = 'num'
+      Origin = 'num'
+      Required = True
+    end
+    object tbCasasrua: TStringField
+      DisplayWidth = 37
+      FieldName = 'rua'
+      Origin = 'rua'
+      Required = True
+      Size = 80
+    end
+    object tbCasasbairro: TStringField
+      DisplayWidth = 32
+      FieldName = 'bairro'
+      Origin = 'bairro'
+      Required = True
+      Size = 50
+    end
+    object tbCasasvalor: TBCDField
+      DisplayWidth = 11
+      FieldName = 'valor'
+      Origin = 'valor'
+      Required = True
+      Precision = 10
+      Size = 2
+    end
+    object tbCasasdia_pag: TIntegerField
+      AutoGenerateValue = arDefault
+      DisplayWidth = 10
+      FieldName = 'dia_pag'
+      Origin = 'dia_pag'
+    end
+    object tbCasasdata_inicial: TDateField
+      AutoGenerateValue = arDefault
+      DisplayWidth = 10
+      FieldName = 'data_inicial'
+      Origin = 'data_inicial'
+    end
+    object tbCasasdata_final: TDateField
+      AutoGenerateValue = arDefault
+      DisplayWidth = 10
+      FieldName = 'data_final'
+      Origin = 'data_final'
+    end
+  end
+  object dsCasas: TDataSource
+    DataSet = tbCasas
+    Left = 176
+    Top = 128
+  end
+  object tbInquilinos: TFDTable
+    Active = True
+    IndexName = 'num_casa'
+    MasterSource = dsCasas
+    MasterFields = 'num'
+    Connection = connection
+    ResourceOptions.AssignedValues = [rvEscapeExpand]
+    TableName = 'casas.inquilinos'
+    Left = 256
+    Top = 72
+    object tbInquilinoscpf: TStringField
+      FieldName = 'cpf'
+      Origin = 'cpf'
+      Required = True
+      Size = 14
+    end
+    object tbInquilinosnome: TStringField
+      FieldName = 'nome'
+      Origin = 'nome'
+      Required = True
+      Size = 50
+    end
+    object tbInquilinoscelular: TStringField
+      FieldName = 'celular'
+      Origin = 'celular'
+      Required = True
+      Size = 16
+    end
+    object tbInquilinosindicacao: TStringField
+      FieldName = 'indicacao'
+      Origin = 'indicacao'
+      Required = True
+      Size = 50
+    end
+    object tbInquilinosnum_casa: TIntegerField
+      FieldName = 'num_casa'
+      Origin = 'num_casa'
+      Required = True
+    end
+  end
+  object dsInquilinos: TDataSource
+    DataSet = tbInquilinos
+    Left = 256
+    Top = 136
+  end
+  object sqlDesapropiateHouseDeleteUser: TFDCommand
+    Connection = connection
+    CommandText.Strings = (
+      'DELETE FROM inquilinos WHERE num_casa = :pNum')
+    ParamData = <
+      item
+        Name = 'pNum'
+        DataType = ftInteger
+        ParamType = ptInput
+      end>
+    Left = 312
+    Top = 264
+  end
+  object sqlDesapropiateHouseUpdatePayDay: TFDCommand
+    Connection = connection
+    CommandText.Strings = (
+      'UPDATE casas SET dia_pag = NULL WHERE num = :pNum')
+    ParamData = <
+      item
+        Name = 'pNum'
+        ParamType = ptInput
+      end>
+    Left = 312
+    Top = 320
+  end
+  object sqlDesapropiateHouseUpdateBeginDate: TFDCommand
+    Connection = connection
+    CommandText.Strings = (
+      'UPDATE casas SET data_inicial = NULL WHERE num = :pNum')
+    ParamData = <
+      item
+        Name = 'pNum'
+        ParamType = ptInput
+      end>
+    Left = 312
+    Top = 368
+  end
+  object sqlDesapropiateHouseUpdateEndDate: TFDCommand
+    Connection = connection
+    CommandText.Strings = (
+      'UPDATE casas SET data_final = NULL WHERE num = :pNum')
+    ParamData = <
+      item
+        Name = 'pNum'
+        ParamType = ptInput
+      end>
+    Left = 312
+    Top = 416
+  end
+  object sqlInsertUsers: TFDCommand
+    Connection = connection
+    CommandText.Strings = (
+      'INSERT INTO inquilinos(cpf,nome,celular,indicacao,num_casa)'
+      'VALUES (:pCpf,:pName,:pCelular,:pIndicacao,:pNumCasa) ')
+    ParamData = <
+      item
+        Name = 'pCpf'
+        ParamType = ptInput
+      end
+      item
+        Name = 'pName'
+        ParamType = ptInput
+      end
+      item
+        Name = 'pCelular'
+        ParamType = ptInput
+      end
+      item
+        Name = 'pIndicacao'
+        ParamType = ptInput
+      end
+      item
+        Name = 'pNumCasa'
+        ParamType = ptInput
+      end>
+    Left = 96
+    Top = 296
+  end
+  object sqlEditHouse: TFDCommand
+    Connection = connection
+    CommandText.Strings = (
+      'UPDATE casas'
+      
+        'SET dia_pag = :pPayDay,data_inicial = :pBeginDate, data_final = ' +
+        ':pEndDate'
+      'WHERE num = :pNumHouse')
+    ParamData = <
+      item
+        Name = 'pPayDay'
+        ParamType = ptInput
+      end
+      item
+        Name = 'pBeginDate'
+        ParamType = ptInput
+      end
+      item
+        Name = 'pEndDate'
+        ParamType = ptInput
+      end
+      item
+        Name = 'pNumHouse'
+        ParamType = ptInput
+      end>
+    Left = 96
+    Top = 352
+  end
+end

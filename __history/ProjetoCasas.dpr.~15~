@@ -1,0 +1,33 @@
+program ProjetoCasas;
+
+uses
+  Vcl.Forms,
+  unitPrincipal in 'unitPrincipal.pas' {formPrincipal},
+  unitDM in 'unitDM.pas' {DM: TDataModule},
+  unitCasas in 'unitCasas.pas' {formCasas},
+  unitInquilinos in 'unitInquilinos.pas' {formInquilinos},
+  unitRegisterHouse in 'unitRegisterHouse.pas' {formRegisterHouse},
+  unitFindHouse in 'unitFindHouse.pas' {formFindHouse},
+  unitHireHouse in 'unitHireHouse.pas' {formHireHouse},
+  unitFindUser in 'unitFindUser.pas' {formFindUser},
+  unitDesapropiateHouse in 'unitDesapropiateHouse.pas' {formDesapropiateHouse},
+  Vcl.Themes,
+  Vcl.Styles;
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  TStyleManager.TrySetStyle('Glossy');
+  Application.CreateForm(TformPrincipal, formPrincipal);
+  Application.CreateForm(TDM, DM);
+  Application.CreateForm(TformCasas, formCasas);
+  Application.CreateForm(TformInquilinos, formInquilinos);
+  Application.CreateForm(TformRegisterHouse, formRegisterHouse);
+  Application.CreateForm(TformFindHouse, formFindHouse);
+  Application.CreateForm(TformHireHouse, formHireHouse);
+  Application.CreateForm(TformFindUser, formFindUser);
+  Application.CreateForm(TformDesapropiateHouse, formDesapropiateHouse);
+  Application.Run;
+end.

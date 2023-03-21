@@ -1,0 +1,71 @@
+unit unitDM;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
+  FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.MySQL,
+  FireDAC.Phys.MySQLDef, FireDAC.VCLUI.Wait, FireDAC.Stan.Param, FireDAC.DatS,
+  FireDAC.DApt.Intf, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client;
+
+type
+  TDM = class(TDataModule)
+    connection: TFDConnection;
+    sqlFindHouse: TFDQuery;
+    dsFindHouse: TDataSource;
+    sqlFindUser: TFDQuery;
+    dsFindUser: TDataSource;
+    sqlFindHousenum: TFDAutoIncField;
+    sqlFindHouserua: TStringField;
+    sqlFindHousebairro: TStringField;
+    sqlFindHousevalor: TBCDField;
+    sqlFindHousedia_pag: TIntegerField;
+    sqlFindHousedata_inicial: TDateField;
+    sqlFindHousedata_final: TDateField;
+    tbCasas: TFDTable;
+    dsCasas: TDataSource;
+    tbInquilinos: TFDTable;
+    dsInquilinos: TDataSource;
+    tbCasasnum: TIntegerField;
+    tbCasasrua: TStringField;
+    tbCasasbairro: TStringField;
+    tbCasasvalor: TBCDField;
+    tbCasasdia_pag: TIntegerField;
+    tbCasasdata_inicial: TDateField;
+    tbCasasdata_final: TDateField;
+    tbInquilinoscpf: TStringField;
+    tbInquilinosnome: TStringField;
+    tbInquilinoscelular: TStringField;
+    tbInquilinosindicacao: TStringField;
+    tbInquilinosnum_casa: TIntegerField;
+    sqlFindHouseNomeInquilino: TStringField;
+    sqlDesapropiateHouseDeleteUser: TFDCommand;
+    sqlDesapropiateHouseUpdatePayDay: TFDCommand;
+    sqlDesapropiateHouseUpdateBeginDate: TFDCommand;
+    sqlDesapropiateHouseUpdateEndDate: TFDCommand;
+    sqlInsertUsers: TFDCommand;
+    sqlEditHouse: TFDCommand;
+    sqlFindUsercpf: TStringField;
+    sqlFindUsernome: TStringField;
+    sqlFindUsercelular: TStringField;
+    sqlFindUserindicacao: TStringField;
+    sqlFindUsernum_casa: TIntegerField;
+    sqlFindUserobs: TMemoField;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  DM: TDM;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+{$R *.dfm}
+
+end.

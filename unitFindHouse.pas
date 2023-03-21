@@ -1,0 +1,202 @@
+unit unitFindHouse;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Data.DB,
+  Vcl.Grids, Vcl.DBGrids, Vcl.Buttons,Clipbrd, Vcl.Imaging.pngimage;
+
+type
+  TformFindHouse = class(TForm)
+    Panel1: TPanel;
+    Label1: TLabel;
+    Image1: TImage;
+    lblType: TLabel;
+    rgType: TRadioGroup;
+    txtFindHouse: TEdit;
+    gridFindHouse: TDBGrid;
+    btnSave: TBitBtn;
+    btnRemoveHouse: TBitBtn;
+    btnCancel: TBitBtn;
+    lblRes: TLabel;
+    btnEditHous: TBitBtn;
+    procedure rgTypeClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure txtFindHouseChange(Sender: TObject);
+    procedure btnSaveClick(Sender: TObject);
+    procedure btnRemoveHouseClick(Sender: TObject);
+    procedure btnCancelClick(Sender: TObject);
+    procedure btnEditHousClick(Sender: TObject);
+    procedure gridFindHouseKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  formFindHouse: TformFindHouse;
+
+implementation
+
+{$R *.dfm}
+
+uses unitCasas, unitDM, unitInquilinos, unitPrincipal, unitRegisterHouse;
+
+procedure TformFindHouse.btnCancelClick(Sender: TObject);
+begin
+  DM.sqlFindHouse.Cancel;
+  DM.sqlFindHouse.Refresh;
+  btnEditHous.Enabled := True;
+  formFindHouse.Close;
+end;
+
+procedure TformFindHouse.btnSaveClick(Sender: TObject);
+begin
+  if DM.sqlFindHouse.State in [dsEdit] then
+    begin
+      DM.sqlFindHouse.Post;
+      lblRes.Caption := 'Casa editada com sucesso!';
+      btnSave.Enabled := False;
+      gridFindHouse.ReadOnly := True;
+      DM.sqlFindHouse.Refresh;
+      btnEditHous.Enabled := True;
+    end
+  else
+    begin
+      ShowMessage('Edite algo primeiro para poder salvar!');
+    end;
+
+end;
+
+procedure TformFindHouse.btnEditHousClick(Sender: TObject);
+begin
+  gridFindHouse.ReadOnly := False;
+  btnEditHous.Enabled := False;
+  btnSave.Enabled := True;
+end;
+
+procedure TformFindHouse.btnRemoveHouseClick(Sender: TObject);
+begin
+  if Application.MessageBox('Deseja realmente excluir essa casa?','Atenção',MB_ICONEXCLAMATION+MB_OKCANCEL) = mrOk then
+    begin
+      DM.sqlFindHouse.Delete;
+      lblRes.Caption := 'Casa removida com sucesso!';
+    end;
+end;
+
+procedure TformFindHouse.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  DM.sqlFindHouse.Close;
+end;
+
+procedure TformFindHouse.FormShow(Sender: TObject);
+begin
+ // formCasas.Hide;
+  DM.sqlFindHouse.Refresh;
+  lblType.Caption := 'Procure pelo Número da casa:';
+  lblRes.Caption := '';
+  if DM.sqlFindHouse.State in [dsBrowse] then
+    begin
+      btnSave.Enabled := False;
+    end;
+end;
+
+procedure TformFindHouse.gridFindHouseKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+if (Shift = [ssCtrl]) then begin// CTRL
+  case Key of
+    86: Clipboard.AsText:='';// CTRL + V
+  end;
+end;
+end;
+
+procedure TformFindHouse.rgTypeClick(Sender: TObject);
+begin
+  case rgType.ItemIndex of
+    0:
+     begin
+        DM.sqlFindHouse.Close;
+        DM.sqlFindHouse.SQL.Clear;
+        DM.sqlFindHouse.SQL.Text := 'SELECT * FROM casas';
+        lblType.Caption := 'Procure pelo Número da casa:';
+        DM.sqlFindHouse.Open();
+     end;
+
+    1:
+      begin
+        DM.sqlFindHouse.Close;
+        DM.sqlFindHouse.SQL.Clear;
+        DM.sqlFindHouse.SQL.Text := 'SELECT * FROM casas';
+        lblType.Caption := 'Procure pela Rua da casa:';
+        DM.sqlFindHouse.Open();
+     end;
+
+    2:
+      begin
+        DM.sqlFindHouse.Close;
+        DM.sqlFindHouse.SQL.Clear;
+        DM.sqlFindHouse.SQL.Text := 'SELECT * FROM casas';
+        lblType.Caption := 'Procure pelo Bairro da casa:';
+        DM.sqlFindHouse.Open();
+      end;
+    3:
+      begin
+        DM.sqlFindHouse.Close;
+        DM.sqlFindHouse.SQL.Clear;
+        DM.sqlFindHouse.SQL.Text := 'SELECT * FROM casas';
+        lblType.Caption := 'Procure pelo Valor da casa:';
+        DM.sqlFindHouse.Open();
+      end;
+    4:
+      begin
+        DM.sqlFindHouse.Close;
+        DM.sqlFindHouse.SQL.Clear;
+        DM.sqlFindHouse.SQL.Add('SELECT * FROM casas WHERE dia_pag IS NULL');
+        DM.sqlFindHouse.Open();
+      end;
+  end;
+end;
+
+procedure TformFindHouse.txtFindHouseChange(Sender: TObject);
+begin
+  DM.sqlFindHouse.Close;
+  DM.sqlFindHouse.SQL.Clear;
+  if txtFindHouse.Text = '' then
+    begin
+    DM.sqlFindHouse.SQL.Text := 'SELECT * FROM casas'
+    end
+  else
+    begin
+      case rgType.ItemIndex of
+    0:
+      begin
+          DM.sqlFindHouse.SQL.Add('SELECT * FROM casas WHERE num LIKE :pConsulta');
+          DM.sqlFindHouse.ParamByName('pConsulta').Value := '%'+txtFindHouse.Text+'%';
+      end;
+    1:
+       begin
+          DM.sqlFindHouse.SQL.Add('SELECT * FROM casas WHERE rua LIKE :pConsulta');
+          DM.sqlFindHouse.ParamByName('pConsulta').Value := '%'+txtFindHouse.Text+'%';
+      end;
+    2:
+       begin
+          DM.sqlFindHouse.SQL.Add('SELECT * FROM casas WHERE bairro LIKE :pConsulta');
+          DM.sqlFindHouse.ParamByName('pConsulta').Value := '%'+txtFindHouse.Text+'%';
+      end;
+    3:
+       begin
+          DM.sqlFindHouse.SQL.Add('SELECT * FROM casas WHERE valor LIKE :pConsulta');
+          DM.sqlFindHouse.ParamByName('pConsulta').Value := '%'+txtFindHouse.Text+'%';
+      end;
+  end;
+    end;
+
+  DM.sqlFindHouse.Open();
+end;
+
+end.

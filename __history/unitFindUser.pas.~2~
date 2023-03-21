@@ -1,0 +1,98 @@
+unit unitFindUser;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Data.DB,
+  Vcl.Grids, Vcl.DBGrids;
+
+type
+  TformFindUser = class(TForm)
+    Panel1: TPanel;
+    Label1: TLabel;
+    Image1: TImage;
+    rgType: TRadioGroup;
+    lblConsInquilino: TLabel;
+    txtFindUser: TEdit;
+    gridFindHouse: TDBGrid;
+    procedure txtFindUserChange(Sender: TObject);
+    procedure rgTypeClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  formFindUser: TformFindUser;
+
+implementation
+
+{$R *.dfm}
+
+uses unitCasas, unitDM, unitFindHouse, unitHireHouse, unitInquilinos,
+  unitPrincipal, unitRegisterHouse;
+
+procedure TformFindUser.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  DM.sqlFindUser.Close;
+  formInquilinos.Visible := True;
+end;
+
+procedure TformFindUser.FormShow(Sender: TObject);
+begin
+  DM.sqlFindUser.Refresh;
+  formInquilinos.Hide;
+end;
+
+procedure TformFindUser.rgTypeClick(Sender: TObject);
+begin
+  case rgType.ItemIndex of
+    0: lblConsInquilino.Caption := 'Procure pelo Nome do Inquilino:';
+    1: lblConsInquilino.Caption := 'Procure pela Celular do Inquilino:';
+    2: lblConsInquilino.Caption := 'Procure pelo Número da Casa:';
+    3: lblConsInquilino.Caption := 'Procure pelo CPF do Inquilino:';
+  end;
+end;
+
+procedure TformFindUser.txtFindUserChange(Sender: TObject);
+begin
+  DM.sqlFindUser.Close;
+  DM.sqlFindUser.SQL.Clear;
+  if txtFindUser.Text = '' then
+    begin
+    DM.sqlFindUser.SQL.Text := 'SELECT * FROM inquilinos';
+    end
+  else
+    begin
+      case rgType.ItemIndex of
+    0:
+      begin
+          DM.sqlFindUser.SQL.Add('SELECT * FROM inquilinos WHERE nome LIKE :pUser');
+          DM.sqlFindUser.ParamByName('pUser').Value := '%'+txtFindUser.Text+'%';
+      end;
+    1:
+       begin
+          DM.sqlFindUser.SQL.Add('SELECT * FROM inquilinos WHERE celular LIKE :pUser');
+          DM.sqlFindUser.ParamByName('pUser').Value := '%'+txtFindUser.Text+'%';
+      end;
+    2:
+       begin
+          DM.sqlFindUser.SQL.Add('SELECT * FROM inquilinos WHERE num_casa LIKE :pUser');
+          DM.sqlFindUser.ParamByName('pUser').Value := '%'+txtFindUser.Text+'%';
+      end;
+    3:
+       begin
+          DM.sqlFindUser.SQL.Add('SELECT * FROM inquilinos WHERE cpf LIKE :pUser');
+          DM.sqlFindUser.ParamByName('pUser').Value := '%'+txtFindUser.Text+'%';
+      end;
+  end;
+    end;
+
+  DM.sqlFindUser.Open();
+end;
+
+end.
